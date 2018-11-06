@@ -33,20 +33,26 @@ function getCover($artist,$title){
 
     if(isset($covers[$hash])) return $covers[$hash];
 
-    
-    $json = getURL('http://musicbrainz.org/ws/2/annotation/?fmt=json&query='.urlencode($artist.' '.$title));
+    //http://musicbrainz.org/ws/2/release/?fmt=json&query=The%20Lights%20Go%20Down%20Electric%20Light%20Orchestra
+    $json = getURL('http://musicbrainz.org/ws/2/release/?fmt=json&query='.urlencode('"'.$title.'","'.$artist.'"'));
     $data = json_decode($json,true);
     if($data['count'] == 0 ) return false;
-    $mbid = $data['annotations'][0]['entity'];
-    $json = getURL('https://coverartarchive.org/release/'.$mbid);
-    if(!$json) return false;
-    $data = json_decode($json,true);
+    $attempt = 0;
+    foreach($data['releases'] as $release){
+        if($attempt++ > 10) break;
+        if($release['score'] < 95) break;
 
-    $img =  $data['images'][0]['thumbnails']['large'];
-    $covers[$hash] = $img;
-    file_put_contents('covers.json',json_encode($covers));
+        $json = getURL('https://coverartarchive.org/release/'.$release['id']);
+        if(!$json) continue;
 
-    return $img;
+        $data = json_decode($json,true);
+        $img =  $data['images'][0]['thumbnails']['large'];
+        $covers[$hash] = $img;
+        file_put_contents('covers.json',json_encode($covers));
+        return $img;   
+    }
+    return false;
+    
 }
 
 
