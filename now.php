@@ -34,7 +34,7 @@ function getCover($artist,$title){
     if(isset($covers[$hash])) return $covers[$hash];
 
     //http://musicbrainz.org/ws/2/release/?fmt=json&query=release:%22We%20will%20Rock%20you%22%20AND%20artist:%22Queen%22
-    $json = getURL('http://musicbrainz.org/ws/2/release/?fmt=json&query='.urlencode('release:"'.$title.'" AND artist:"'.$artist.'"'));
+    $json = getURL('http://musicbrainz.org/ws/2/release/?fmt=json&query='.urlencode('release:"'.$title.'" AND artist:"'.str_replace(', ','","',$artist).'"'));
     $data = json_decode($json,true);
     if($data['count'] == 0 ) return false;
     $attempt = 0;
@@ -42,8 +42,9 @@ function getCover($artist,$title){
         if($attempt++ > 10) break;
         if($release['score'] < 95) break;
 
-        $json = getURL('https://coverartarchive.org/release/'.$release['id']);
-        if(!$json) continue;
+        if(!$json = getURL('https://coverartarchive.org/release/'.$release['id'])){
+            if(!$json = getURL('https://coverartarchive.org/release-group/'.$release['release-group']['id'])) continue;
+        }
 
         $data = json_decode($json,true);
         $img =  $data['images'][0]['thumbnails']['large'];
