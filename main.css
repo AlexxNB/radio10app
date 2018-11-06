@@ -1,3 +1,8 @@
+*{
+    margin:0px;
+    padding:0px;
+}
+
 body{
     background-color:black;
     color:white;
@@ -23,10 +28,11 @@ body,html{
 }
 
 #cover{
+    text-align:center;
     margin-top: 40px;
 }
 #cover img{
-    width:500px;
+    height:200px;
 }
 
 #title{
