@@ -14,6 +14,7 @@ function getCurentTitle(){
     $.getJSON( "now.php", function( resp ) {
         if(artist != resp.artist || title != resp.title) 
         {
+            console.log(resp)
             if(resp.error !== undefined) { 
                 hideCover();
             }else{
@@ -33,8 +34,12 @@ function changeCover(artist,title,cover){
     $('#info').fadeOut(1000,function(){
         $('#artist').text(artist);
         $('#title').text(title);
-        $('#cover img').attr('src',cover);
-        $('#info').fadeIn(1000);
+        $('#cover img').remove();
+        var img = $('<img src="'+cover+'"/>')
+        img.on('load',function(){
+            $('#info').fadeIn(1000);
+        });
+        $('#cover').append(img)
     });
 }
 
