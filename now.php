@@ -33,8 +33,8 @@ function getCover($artist,$title){
 
     if(isset($covers[$hash])) return $covers[$hash];
 
-    //http://musicbrainz.org/ws/2/release/?fmt=json&query=The%20Lights%20Go%20Down%20Electric%20Light%20Orchestra
-    $json = getURL('http://musicbrainz.org/ws/2/release/?fmt=json&query='.urlencode('"'.$title.'","'.$artist.'"'));
+    //http://musicbrainz.org/ws/2/release/?fmt=json&query=release:%22We%20will%20Rock%20you%22%20AND%20artist:%22Queen%22
+    $json = getURL('http://musicbrainz.org/ws/2/release/?fmt=json&query='.urlencode('release:"'.$title.'" AND artist:"'.$artist.'"'));
     $data = json_decode($json,true);
     if($data['count'] == 0 ) return false;
     $attempt = 0;
